@@ -13,7 +13,7 @@
       <button :disabled="uploading" class="bg-indigo-600 text-white px-4 py-2 rounded">
         {{ uploading ? 'Uploading...' : 'Upload' }}
       </button>
-      <p v-if="message" class="text-sm text-gray-700">{{ message }}</p>
+      <p v-if="message" :class="['text-sm', isError ? 'text-red-600' : 'text-green-600']">{{ message }}</p>
     </form>
     <p class="mt-4"><router-link to="/" class="text-indigo-600">Back to sites</router-link></p>
   </div>
@@ -28,6 +28,7 @@ const name = ref('');
 const fileInput = ref(null);
 const uploading = ref(false);
 const message = ref('');
+const isError = ref(false);
 const router = useRouter();
 
 async function submit() {
@@ -40,10 +41,12 @@ async function submit() {
     const res = await axios.post('/sites', formData, {
       headers: { 'Content-Type': 'multipart/form-data' },
     });
+    isError.value = false;
     message.value = 'Uploaded: ' + res.data.site.slug;
     await new Promise(r => setTimeout(r, 800));
     router.push('/');
   } catch (e) {
+    isError.value = true;
     message.value = e.response?.data?.message || 'Upload failed';
   } finally {
     uploading.value = false;

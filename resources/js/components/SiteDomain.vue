@@ -1,13 +1,13 @@
 <template>
   <div class="fixed inset-0 bg-black/50 flex items-center justify-center z-50" @click.self="close">
     <div class="bg-white rounded-lg shadow-lg w-full max-w-md p-6">
+      <div class="bg-blue-600 text-black rounded p-3 mb-4 text-sm">
+        Create an A record (or CNAME) in your DNS provider pointing this domain to your server's IP. DNS propagation can take some time.
+      </div>
       <h3 class="text-lg font-semibold mb-4">Custom domain — {{ site.name }}</h3>
       <form @submit.prevent="submit">
         <label class="block mb-1">Custom domain (leave empty to clear)</label>
-        <input v-model="domain" placeholder="example.com" class="w-full border rounded px-3 py-2 mb-3">
-        <p class="text-xs text-gray-500 mb-3">
-          Create an A record (or CNAME) in your DNS provider pointing this domain to your server's IP. DNS propagation can take some time.
-        </p>        <p v-if="error" class="text-red-600 text-sm mb-3">{{ error }}</p>
+        <input v-model="domain" placeholder="example.com" class="w-full border rounded px-3 py-2 mb-3">        <p v-if="error" class="text-red-600 text-sm mb-3">{{ error }}</p>
         <p v-if="success" class="text-green-600 text-sm mb-3">{{ success }}</p>
         <div class="flex justify-end gap-3">
           <button type="button" @click="close" class="px-4 py-2 rounded border">Close</button>

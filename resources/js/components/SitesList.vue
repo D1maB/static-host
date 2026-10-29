@@ -15,7 +15,6 @@
             <span :class="['ml-2 text-xs font-medium', site.domain_status === 'ready' ? 'text-green-600' : 'text-amber-600']">
               ({{ site.domain_status || 'pending' }})
             </span>
-            <button @click="checkDomain(site)" class="ml-2 text-indigo-600 hover:underline">Check DNS</button>
             <span v-if="domainStatus[site.id]" class="ml-2" :class="domainStatus[site.id].ready ? 'text-green-600' : 'text-red-600'">
               {{ domainStatus[site.id].message }}
             </span>

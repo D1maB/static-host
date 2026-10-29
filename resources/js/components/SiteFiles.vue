@@ -8,7 +8,7 @@
       <div v-if="loading" class="text-gray-500">Loading...</div>
       <ul v-else class="space-y-1 text-sm">
         <li v-for="f in files" :key="f.path" class="flex justify-between border-b py-1">
-          <a :href="fileUrl(f.path)" target="_blank" class="text-amber-600">{{ f.path }}</a>
+          <a :href="fileUrl(f.path)" target="_blank" class="text-slate-600">{{ f.path }}</a>
           <span class="text-gray-400">{{ f.size }} B</span>
         </li>
         <li v-if="!files.length" class="text-gray-500">No files.</li>

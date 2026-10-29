@@ -21,9 +21,6 @@ class SiteForm
                     ->required(),
                 TextInput::make('slug')
                     ->required(),
-                TextInput::make('entry_path')
-                    ->required()
-                    ->default('index.html'),
                 TextInput::make('storage_path')
                     ->required(),
                 Toggle::make('is_active')

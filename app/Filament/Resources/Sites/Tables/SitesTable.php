@@ -21,8 +21,6 @@ class SitesTable
                     ->searchable(),
                 TextColumn::make('slug')
                     ->searchable(),
-                TextColumn::make('entry_path')
-                    ->searchable(),
                 TextColumn::make('domain')
                     ->label('Domain')
                     ->getStateUsing(fn ($record) => strtolower($record->slug) . '.' . config('app.site_base_domain', 'localhost'))

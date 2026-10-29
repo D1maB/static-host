@@ -25,7 +25,7 @@ class SiteController extends Controller
 
         $user = $request->user();
         $slug = Str::slug($request->input('name')).'-'.Str::random(6);
-        $storagePath = 'sites/'.$slug;
+        $storagePath = 'sites/'.$user->id.'/'.$slug;
         $absolute = storage_path('app/private/'.$storagePath);
 
         if (! is_dir($absolute)) {
@@ -49,6 +49,22 @@ class SiteController extends Controller
 
         $zip->extractTo($absolute);
         $zip->close();
+
+        // Flatten a single top-level directory so the site serves from the root.
+        $rootEntries = array_values(array_diff(scandir($absolute), ['.', '..']));
+        $rootDirs = array_values(array_filter($rootEntries, fn ($entry) => is_dir($absolute . '/' . $entry) && ! is_link($absolute . '/' . $entry)));
+        $rootFiles = array_values(array_filter($rootEntries, fn ($entry) => is_file($absolute . '/' . $entry)));
+
+        if (count($rootDirs) === 1 && count($rootFiles) === 0) {
+            $top = $rootDirs[0];
+            $topPath = $absolute . '/' . $top;
+
+            foreach (array_diff(scandir($topPath), ['.', '..']) as $item) {
+                rename($topPath . '/' . $item, $absolute . '/' . $item);
+            }
+
+            rmdir($topPath);
+        }
 
         $entryPath = file_exists($absolute.'/index.html') ? 'index.html' : null;
         if (! $entryPath) {

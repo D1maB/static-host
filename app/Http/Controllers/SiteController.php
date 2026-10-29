@@ -11,8 +11,29 @@ class SiteController extends Controller
 {
     public function index(Request $request)
     {
+        $sites = $request->user()->sites()->latest()->get()->map(function ($site) {
+            $base = storage_path('app/private/' . $site->storage_path);
+            $bytes = 0;
+
+            if (is_dir($base)) {
+                $iterator = new \RecursiveIteratorIterator(
+                    new \RecursiveDirectoryIterator($base, \RecursiveDirectoryIterator::SKIP_DOTS),
+                );
+
+                foreach ($iterator as $file) {
+                    if ($file->isFile()) {
+                        $bytes += $file->getSize();
+                    }
+                }
+            }
+
+            $site->size_mb = round($bytes / 1048576, 2);
+
+            return $site;
+        });
+
         return response()->json([
-            'sites' => $request->user()->sites()->latest()->get(),
+            'sites' => $sites,
         ]);
     }
 

@@ -10,6 +10,7 @@
         <div>
           <div class="font-medium">{{ site.name }}</div>
           <a :href="'http://' + site.slug.toLowerCase() + '.localhost/'" target="_blank" class="text-sm text-indigo-600">{{ site.slug.toLowerCase() }}.localhost</a>
+          <div class="text-xs text-gray-500">{{ site.size_mb }} MB</div>
         </div>
         <div class="flex gap-3 items-center">
           <button @click="viewFiles(site)" class="text-indigo-600 text-sm">Files</button>

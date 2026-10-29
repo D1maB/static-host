@@ -1,7 +1,5 @@
 <?php
 
-use App\Http\Controllers\Profile\SiteController as AdminSiteController;
-use App\Http\Controllers\Profile\UserController as AdminUserController;
 use App\Http\Controllers\Auth\OtpController;
 use App\Http\Controllers\SiteController;
 use App\Http\Controllers\StaticSiteController;
@@ -31,16 +29,7 @@ Route::middleware('auth')->group(function () {
     Route::delete('/sites/{site}', [SiteController::class, 'destroy'])->name('sites.destroy');
 });
 
-Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function () {
-    Route::get('/', function () {
-        return view('profile.dashboard');
-    })->name('dashboard');
-    Route::get('/users', [AdminUserController::class, 'index'])->name('users');
-    Route::delete('/users/{user}', [AdminUserController::class, 'destroy'])->name('users.destroy');
-    Route::get('/sites', [AdminSiteController::class, 'index'])->name('sites');
-    Route::delete('/sites/{site}', [AdminSiteController::class, 'destroy'])->name('sites.destroy');
-    Route::patch('/sites/{site}/toggle', [AdminSiteController::class, 'toggle'])->name('sites.toggle');
-});
+// Admin UI is provided by Filament at /admin.
 
 Route::domain('{site:slug}.' . config('app.site_base_domain', 'localhost'))
     ->group(function () {

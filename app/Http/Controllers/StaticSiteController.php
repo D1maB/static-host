@@ -24,8 +24,10 @@ class StaticSiteController extends Controller
         $relative = $path ?? $site->entry_path;
         $relative = ltrim(str_replace(['..', '\\'], ['', '/'], $relative), '/');
 
-        $blockedExtensions = ['php', 'phtml', 'php3', 'php4', 'php5', 'phar', 'pht', 'jsp', 'asp', 'aspx', 'sh', 'exe', 'bat', 'cmd', 'cgi', 'pl', 'py', 'rb'];
-        if (in_array(strtolower(pathinfo($relative, PATHINFO_EXTENSION)), $blockedExtensions, true)) {
+        $allowedExtensions = ['html', 'htm', 'css', 'js', 'mjs', 'json', 'xml', 'txt', 'md', 'svg', 'png', 'jpg', 'jpeg', 'gif', 'webp', 'ico', 'bmp', 'avif', 'pdf', 'woff', 'woff2', 'ttf', 'otf', 'eot', 'webmanifest', 'map'];
+        $extension = strtolower(pathinfo($relative, PATHINFO_EXTENSION));
+
+        if ($extension !== '' && ! in_array($extension, $allowedExtensions, true)) {
             abort(404);
         }
         $file = realpath($base.'/'.$relative);

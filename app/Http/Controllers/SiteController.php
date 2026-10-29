@@ -37,9 +37,9 @@ class SiteController extends Controller
             return response()->json(['message' => 'Invalid zip archive'], 422);
         }
 
-        // Prevent path traversal and unsafe executable files
-        $blockedExtensions = ['php', 'phtml', 'php3', 'php4', 'php5', 'phar', 'pht', 'jsp', 'asp', 'aspx', 'sh', 'exe', 'bat', 'cmd', 'com', 'cgi', 'pl', 'py', 'rb'];
+        $allowedExtensions = ['html', 'htm', 'css', 'js', 'mjs', 'json', 'xml', 'txt', 'md', 'svg', 'png', 'jpg', 'jpeg', 'gif', 'webp', 'ico', 'bmp', 'avif', 'pdf', 'woff', 'woff2', 'ttf', 'otf', 'eot', 'webmanifest', 'map'];
 
+        // Prevent path traversal and unsafe files
         for ($i = 0; $i < $zip->numFiles; $i++) {
             $name = $zip->getNameIndex($i);
 
@@ -54,14 +54,17 @@ class SiteController extends Controller
             if ($basename === '.htaccess' || $basename === '.user.ini') {
                 $zip->close();
 
-                return response()->json(['message' => 'Server configuration or executable files are not allowed'], 422);
+                return response()->json(['message' => 'Server configuration files are not allowed'], 422);
             }
 
-            $extension = strtolower(pathinfo($basename, PATHINFO_EXTENSION));
-            if (in_array($extension, $blockedExtensions, true)) {
-                $zip->close();
+            // Allow directory entries (they have no extension).
+            if (! str_ends_with($name, '/')) {
+                $extension = strtolower(pathinfo($basename, PATHINFO_EXTENSION));
+                if (! in_array($extension, $allowedExtensions, true)) {
+                    $zip->close();
 
-                return response()->json(['message' => 'Executable files are not allowed'], 422);
+                    return response()->json(['message' => 'Only safe static files are allowed'], 422);
+                }
             }
         }
 

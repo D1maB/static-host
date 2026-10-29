@@ -49,27 +49,9 @@ class SitesTable
 
                         return $count;
                     }),
-                TextColumn::make('size_mb')
+                TextColumn::make('size_bytes')
                     ->label('Size (MB)')
-                    ->getStateUsing(function (Site $record) {
-                        $base = storage_path('app/private/' . $record->storage_path);
-                        if (! is_dir($base)) {
-                            return 0;
-                        }
-
-                        $bytes = 0;
-                        $iterator = new \RecursiveIteratorIterator(
-                            new \RecursiveDirectoryIterator($base, \RecursiveDirectoryIterator::SKIP_DOTS),
-                        );
-
-                        foreach ($iterator as $file) {
-                            if ($file->isFile()) {
-                                $bytes += $file->getSize();
-                            }
-                        }
-
-                        return round($bytes / 1048576, 2);
-                    }),
+                    ->formatStateUsing(fn ($state) => round(((int) $state) / 1048576, 2)),
                 IconColumn::make('is_active')
                     ->boolean(),
                 TextColumn::make('published_at')

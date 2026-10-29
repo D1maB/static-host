@@ -12,22 +12,7 @@ class SiteController extends Controller
     public function index(Request $request)
     {
         $sites = $request->user()->sites()->latest()->get()->map(function ($site) {
-            $base = storage_path('app/private/' . $site->storage_path);
-            $bytes = 0;
-
-            if (is_dir($base)) {
-                $iterator = new \RecursiveIteratorIterator(
-                    new \RecursiveDirectoryIterator($base, \RecursiveDirectoryIterator::SKIP_DOTS),
-                );
-
-                foreach ($iterator as $file) {
-                    if ($file->isFile()) {
-                        $bytes += $file->getSize();
-                    }
-                }
-            }
-
-            $site->size_mb = round($bytes / 1048576, 2);
+            $site->size_mb = round(($site->size_bytes ?? 0) / 1048576, 2);
 
             return $site;
         });
@@ -140,6 +125,19 @@ class SiteController extends Controller
             rmdir($topPath);
         }
 
+        $sizeBytes = 0;
+        if (is_dir($absolute)) {
+            $sizeIterator = new \RecursiveIteratorIterator(
+                new \RecursiveDirectoryIterator($absolute, \RecursiveDirectoryIterator::SKIP_DOTS),
+            );
+
+            foreach ($sizeIterator as $file) {
+                if ($file->isFile()) {
+                    $sizeBytes += $file->getSize();
+                }
+            }
+        }
+
         $entryPath = file_exists($absolute.'/index.html') ? 'index.html' : null;
         if (! $entryPath) {
             // find first html
@@ -159,6 +157,7 @@ class SiteController extends Controller
             'slug' => $slug,
             'entry_path' => $entryPath,
             'storage_path' => $storagePath,
+            'size_bytes' => $sizeBytes,
             'published_at' => now(),
         ]);
 

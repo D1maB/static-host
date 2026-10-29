@@ -9,13 +9,39 @@ use function Laravel\Ai\agent;
 
 class ScanSiteContent extends Command
 {
-    protected $signature = 'sites:scan-content {--site=} {--max-chars=8000}';
+    protected $signature = 'sites:scan-content {--site=} {--provider=} {--max-chars=8000}';
 
     protected $description = 'Scan site text content for unsafe or inappropriate content using the Laravel AI SDK (Ollama)';
 
     public function handle(): int
     {
-        $model = env('OLLAMA_MODEL', 'llama3');
+        $providerName = strtolower($this->option('provider') ?: env('AI_SCAN_PROVIDER', env('AI_DEFAULT_PROVIDER', 'ollama')));
+        $lab = match ($providerName) {
+            'openai' => Lab::OpenAi,
+            'anthropic' => Lab::Anthropic,
+            'gemini' => Lab::Gemini,
+            'groq' => Lab::Groq,
+            'mistral' => Lab::Mistral,
+            'deepseek' => Lab::DeepSeek,
+            'ollama' => Lab::Ollama,
+            default => null,
+        };
+
+        if ($lab === null) {
+            $this->error('Unsupported AI provider: ' . $providerName);
+
+            return self::FAILURE;
+        }
+
+        $model = env('AI_SCAN_MODEL', match ($providerName) {
+            'openai' => 'gpt-4o-mini',
+            'anthropic' => 'claude-haiku-4-5-20251001',
+            'gemini' => 'gemini-2.5-flash',
+            'groq' => 'llama-3.3-70b-versatile',
+            'mistral' => 'mistral-small-latest',
+            'deepseek' => 'deepseek-chat',
+            'ollama' => env('OLLAMA_MODEL', 'llama3'),
+        });
         $maxChars = (int) $this->option('max-chars');
         $query = Site::query();
 
@@ -35,7 +61,7 @@ class ScanSiteContent extends Command
             try {
                 $response = agent(
                     instructions: 'You are a content safety scanner. Analyze the provided website text and decide whether it is safe for public hosting. Reply with exactly one word: SAFE or UNSAFE.',
-                )->prompt($text, provider: Lab::Ollama, model: $model, timeout: 120);
+                )->prompt($text, provider: $lab, model: $model, timeout: 120);
 
                 $result = trim((string) $response->text);
                 $this->info($site->slug . ': ' . $result);

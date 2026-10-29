@@ -19,10 +19,6 @@ class SiteForm
                     ->required(),
                 TextInput::make('name')
                     ->required(),
-                TextInput::make('slug')
-                    ->required(),
-                TextInput::make('storage_path')
-                    ->required(),
                 Toggle::make('is_active')
                     ->required(),
                 DateTimePicker::make('published_at'),

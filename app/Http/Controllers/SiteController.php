@@ -101,7 +101,7 @@ class SiteController extends Controller
                 continue;
             }
             $path = $dir.'/'.$item;
-            is_dir($path) && ! is_link($path) ? $this->deleteDirectory($path) : unlink($path);
+            is_dir($path) && ! is_link($path) ? self::deleteDirectory($path) : unlink($path);
         }
         rmdir($dir);
     }

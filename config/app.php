@@ -125,4 +125,6 @@ return [
 
     'site_base_domain' => env('SITE_BASE_DOMAIN', 'localhost'),
 
+    'server_ip' => env('SERVER_IP'),
+
 ];

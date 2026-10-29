@@ -10,7 +10,13 @@
         <div>
           <div class="font-medium">{{ site.name }}</div>
           <a :href="'http://' + site.slug.toLowerCase() + '.localhost/'" target="_blank" class="text-sm text-indigo-600">{{ site.slug.toLowerCase() }}.localhost</a>
-          <div v-if="site.custom_domain" class="text-xs text-gray-500">Custom: {{ site.custom_domain }}</div>
+          <div v-if="site.custom_domain" class="text-xs text-gray-500">
+            Custom: {{ site.custom_domain }}
+            <button @click="checkDomain(site)" class="ml-2 text-indigo-600 hover:underline">Check DNS</button>
+            <span v-if="domainStatus[site.id]" class="ml-2" :class="domainStatus[site.id].ready ? 'text-green-600' : 'text-red-600'">
+              {{ domainStatus[site.id].message }}
+            </span>
+          </div>
           <div class="text-xs text-gray-500">{{ site.size_mb }} MB</div>
         </div>
         <div class="flex gap-3 items-center">
@@ -36,6 +42,7 @@ const sites = ref([]);
 const loading = ref(true);
 const selectedSite = ref(null);
 const domainSite = ref(null);
+const domainStatus = ref({});
 
 async function load() {
   loading.value = true;
@@ -56,6 +63,15 @@ function viewFiles(site) {
 
 function editDomain(site) {
   domainSite.value = site;
+}
+
+async function checkDomain(site) {
+  try {
+    const res = await axios.get('/sites/' + site.id + '/check-domain');
+    domainStatus.value[site.id] = res.data;
+  } catch (e) {
+    domainStatus.value[site.id] = { ready: false, message: 'Check failed.' };
+  }
 }
 
 function onDomainUpdated(updated) {

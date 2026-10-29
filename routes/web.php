@@ -26,6 +26,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/sites/mine', [SiteController::class, 'index'])->name('sites.index');
     Route::get('/sites/{site}/files', [SiteController::class, 'files'])->name('sites.files');
     Route::patch('/sites/{site}/domain', [SiteController::class, 'updateDomain'])->name('sites.domain');
+    Route::get('/sites/{site}/check-domain', [SiteController::class, 'checkDomain'])->name('sites.check-domain');
     Route::post('/sites', [SiteController::class, 'store'])->name('sites.store');
     Route::delete('/sites/{site}', [SiteController::class, 'destroy'])->name('sites.destroy');
 });

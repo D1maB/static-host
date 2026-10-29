@@ -217,6 +217,38 @@ class SiteController extends Controller
         return response()->json(['site' => $site]);
     }
 
+    public function checkDomain(Request $request, Site $site)
+    {
+        if ($site->user_id !== $request->user()->id && ! $request->user()->isAdmin()) {
+            abort(403);
+        }
+
+        if (! $site->custom_domain) {
+            return response()->json([
+                'ready' => false,
+                'addresses' => [],
+                'message' => 'No custom domain has been set.',
+            ]);
+        }
+
+        $records = @dns_get_record($site->custom_domain, DNS_A) ?: [];
+        $addresses = array_values(array_unique(array_filter(array_column($records, 'ip'))));
+
+        $serverIp = config('app.server_ip');
+        $ready = ! empty($addresses) && ($serverIp ? in_array($serverIp, $addresses, true) : true);
+
+        return response()->json([
+            'ready' => $ready,
+            'addresses' => $addresses,
+            'server_ip' => $serverIp,
+            'message' => $ready
+                ? 'DNS appears to resolve correctly.'
+                : (! empty($addresses)
+                    ? 'DNS resolves, but not to this server yet.'
+                    : 'DNS is not resolving yet.'),
+        ]);
+    }
+
     public function destroy(Request $request, Site $site)
     {
         if ($site->user_id !== $request->user()->id && ! $request->user()->isAdmin()) {

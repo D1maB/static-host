@@ -22,9 +22,9 @@
           <div class="text-xs text-gray-500">{{ site.size_mb }} MB</div>
         </div>
         <div class="flex gap-3 items-center">
-          <button @click="viewFiles(site)" class="text-indigo-600 text-sm">Files</button>
-          <button @click="editDomain(site)" class="text-indigo-600 text-sm">Domain</button>
-          <button @click="remove(site)" class="text-red-600 text-sm">Delete</button>
+          <button @click="viewFiles(site)" class="text-indigo-600 text-sm cursor-pointer hover:underline">Files</button>
+          <button @click="editDomain(site)" class="text-indigo-600 text-sm cursor-pointer hover:underline">Domain</button>
+          <button @click="remove(site)" class="text-red-600 text-sm cursor-pointer hover:underline">Delete</button>
         </div>
       </div>
       <div v-if="!sites.length" class="text-gray-500">No sites yet.</div>

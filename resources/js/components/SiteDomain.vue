@@ -10,8 +10,8 @@
         <input v-model="domain" placeholder="example.com" class="w-full border rounded px-3 py-2 mb-3">        <p v-if="error" class="text-red-600 text-sm mb-3">{{ error }}</p>
         <p v-if="success" class="text-green-600 text-sm mb-3">{{ success }}</p>
         <div class="flex justify-end gap-3">
-          <button type="button" @click="close" class="px-4 py-2 rounded border">Close</button>
-          <button type="submit" :disabled="saving" class="bg-indigo-600 text-white px-4 py-2 rounded">
+          <button type="button" @click="close" class="px-4 py-2 rounded border cursor-pointer hover:bg-gray-100">Close</button>
+          <button type="submit" :disabled="saving" class="bg-indigo-600 text-white px-4 py-2 rounded cursor-pointer hover:opacity-90 disabled:cursor-not-allowed">
             {{ saving ? 'Saving...' : 'Save' }}
           </button>
         </div>

@@ -3,7 +3,7 @@
     <div class="bg-white rounded-lg shadow-lg w-full max-w-2xl max-h-[80vh] overflow-auto p-6">
       <div class="flex justify-between items-center mb-4">
         <h3 class="text-lg font-semibold">Files — {{ slug }}</h3>
-        <button @click="close" class="text-gray-500">✕</button>
+        <button @click="close" class="text-gray-500 cursor-pointer hover:text-gray-700">✕</button>
       </div>
       <div v-if="loading" class="text-gray-500">Loading...</div>
       <ul v-else class="space-y-1 text-sm">

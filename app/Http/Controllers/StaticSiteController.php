@@ -42,7 +42,42 @@ class StaticSiteController extends Controller
             }
         }
 
-        $mime = mime_content_type($file) ?: 'application/octet-stream';
+        $extension = strtolower(pathinfo($file, PATHINFO_EXTENSION));
+
+        $mimeTypes = [
+            'html' => 'text/html',
+            'htm' => 'text/html',
+            'css' => 'text/css',
+            'js' => 'application/javascript',
+            'mjs' => 'application/javascript',
+            'json' => 'application/json',
+            'xml' => 'application/xml',
+            'txt' => 'text/plain',
+            'md' => 'text/markdown',
+            'svg' => 'image/svg+xml',
+            'png' => 'image/png',
+            'jpg' => 'image/jpeg',
+            'jpeg' => 'image/jpeg',
+            'gif' => 'image/gif',
+            'webp' => 'image/webp',
+            'ico' => 'image/x-icon',
+            'bmp' => 'image/bmp',
+            'avif' => 'image/avif',
+            'pdf' => 'application/pdf',
+            'woff' => 'font/woff',
+            'woff2' => 'font/woff2',
+            'ttf' => 'font/ttf',
+            'otf' => 'font/otf',
+            'eot' => 'application/vnd.ms-fontobject',
+            'webmanifest' => 'application/manifest+json',
+            'map' => 'application/json',
+        ];
+
+        $mime = $mimeTypes[$extension] ?? (mime_content_type($file) ?: 'application/octet-stream');
+
+        if (str_starts_with($mime, 'text/') || $mime === 'application/javascript' || $mime === 'application/json' || $mime === 'application/xml') {
+            $mime .= '; charset=UTF-8';
+        }
 
         return response()->file($file, ['Content-Type' => $mime]);
     }

@@ -10,16 +10,19 @@
         <div>
           <div class="font-medium">{{ site.name }}</div>
           <a :href="'http://' + site.slug.toLowerCase() + '.localhost/'" target="_blank" class="text-sm text-indigo-600">{{ site.slug.toLowerCase() }}.localhost</a>
+          <div v-if="site.custom_domain" class="text-xs text-gray-500">Custom: {{ site.custom_domain }}</div>
           <div class="text-xs text-gray-500">{{ site.size_mb }} MB</div>
         </div>
         <div class="flex gap-3 items-center">
           <button @click="viewFiles(site)" class="text-indigo-600 text-sm">Files</button>
+          <button @click="editDomain(site)" class="text-indigo-600 text-sm">Domain</button>
           <button @click="remove(site)" class="text-red-600 text-sm">Delete</button>
         </div>
       </div>
       <div v-if="!sites.length" class="text-gray-500">No sites yet.</div>
     </div>
     <SiteFiles v-if="selectedSite" :site="selectedSite" @close="selectedSite = null" />
+    <SiteDomain v-if="domainSite" :site="domainSite" @close="domainSite = null" @updated="onDomainUpdated" />
   </div>
 </template>
 
@@ -27,10 +30,12 @@
 import { ref, onMounted } from 'vue';
 import axios from 'axios';
 import SiteFiles from './SiteFiles.vue';
+import SiteDomain from './SiteDomain.vue';
 
 const sites = ref([]);
 const loading = ref(true);
 const selectedSite = ref(null);
+const domainSite = ref(null);
 
 async function load() {
   loading.value = true;
@@ -47,6 +52,17 @@ async function remove(site) {
 
 function viewFiles(site) {
   selectedSite.value = site;
+}
+
+function editDomain(site) {
+  domainSite.value = site;
+}
+
+function onDomainUpdated(updated) {
+  const idx = sites.value.findIndex(s => s.id === updated.id);
+  if (idx !== -1) {
+    sites.value[idx] = { ...sites.value[idx], ...updated };
+  }
 }
 
 onMounted(load);

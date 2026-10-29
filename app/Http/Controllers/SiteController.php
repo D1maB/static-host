@@ -194,6 +194,29 @@ class SiteController extends Controller
         ]);
     }
 
+    public function updateDomain(Request $request, Site $site)
+    {
+        if ($site->user_id !== $request->user()->id && ! $request->user()->isAdmin()) {
+            abort(403);
+        }
+
+        $validated = $request->validate([
+            'custom_domain' => [
+                'nullable',
+                'string',
+                'max:255',
+                'regex:/^(?!-)[A-Za-z0-9-]+(\.[A-Za-z0-9-]+)*$/',
+                \Illuminate\Validation\Rule::unique('sites', 'custom_domain')->ignore($site->id),
+            ],
+        ]);
+
+        $site->update([
+            'custom_domain' => $validated['custom_domain'] ?: null,
+        ]);
+
+        return response()->json(['site' => $site]);
+    }
+
     public function destroy(Request $request, Site $site)
     {
         if ($site->user_id !== $request->user()->id && ! $request->user()->isAdmin()) {

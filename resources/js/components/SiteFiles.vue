@@ -35,7 +35,7 @@ onMounted(async () => {
 });
 
 function fileUrl(path) {
-  return '/sites/' + slug + '/' + path;
+  return 'http://' + slug.toLowerCase() + '.localhost/' + path;
 }
 
 function close() {

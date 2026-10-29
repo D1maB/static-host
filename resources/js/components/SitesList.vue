@@ -9,7 +9,7 @@
       <div v-for="site in sites" :key="site.id" class="bg-white shadow rounded p-4 flex justify-between items-center">
         <div>
           <div class="font-medium">{{ site.name }}</div>
-          <a :href="'/sites/' + site.slug" target="_blank" class="text-sm text-indigo-600">/sites/{{ site.slug }}</a>
+          <a :href="'http://' + site.slug.toLowerCase() + '.localhost/'" target="_blank" class="text-sm text-indigo-600">{{ site.slug.toLowerCase() }}.localhost</a>
         </div>
         <div class="flex gap-3 items-center">
           <button @click="viewFiles(site)" class="text-indigo-600 text-sm">Files</button>

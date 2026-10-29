@@ -19,7 +19,7 @@
           <tr class="border-b">
             <td class="p-3">{{ $site->name }}</td>
             <td class="p-3">{{ $site->user->email ?? '' }}</td>
-            <td class="p-3"><a href="/sites/{{ $site->slug }}" target="_blank" class="text-indigo-600">{{ $site->slug }}</a></td>
+            <td class="p-3"><a href="http://{{ strtolower($site->slug) }}.localhost" target="_blank" class="text-indigo-600">{{ strtolower($site->slug) }}.localhost</a></td>
             <td class="p-3">{{ $site->is_active ? 'Yes' : 'No' }}</td>
             <td class="p-3 text-right space-x-3">
               <form method="POST" action="{{ route('admin.sites.toggle', $site) }}" class="inline">@csrf @method('PATCH')<button class="text-indigo-600">Toggle</button></form>

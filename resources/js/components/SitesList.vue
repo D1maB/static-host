@@ -11,7 +11,7 @@
           <div class="font-medium">{{ site.name }}</div>
           <a :href="'http://' + site.slug.toLowerCase() + '.localhost/'" target="_blank" class="text-sm text-indigo-600">{{ site.slug.toLowerCase() }}.localhost</a>
           <div v-if="site.custom_domain" class="text-xs text-gray-500">
-            Custom: {{ site.custom_domain }}
+            Custom domain: {{ site.custom_domain }}
             <span :class="['ml-2 text-xs font-medium', site.domain_status === 'ready' ? 'text-green-600' : 'text-amber-600']">
               ({{ site.domain_status || 'pending' }})
             </span>

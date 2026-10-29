@@ -10,7 +10,7 @@ use function Laravel\Ai\agent;
 
 class ScanSiteContent extends Command
 {
-    protected $signature = 'sites:scan-content {--site=} {--max-chars=8000}';
+    protected $signature = 'sites:scan-content {--site=} {--force} {--max-chars=8000}';
 
     protected $description = 'Scan site text content for unsafe or inappropriate content using the Laravel AI SDK';
 
@@ -31,6 +31,10 @@ class ScanSiteContent extends Command
 
         if ($this->option('site')) {
             $query->where('slug', $this->option('site'));
+        }
+
+        if (! $this->option('force')) {
+            $query->whereNull('scanned_at');
         }
 
         foreach ($query->get() as $site) {
@@ -57,7 +61,7 @@ class ScanSiteContent extends Command
 
                 $this->info($site->slug.': '.$result);
             } catch (\Throwable $e) {
-                $this->error($site->slug.': scan failed - '.$e->getMessage());
+                $this->error($site->name.': scan failed - '.$e->getMessage());
             }
         }
 

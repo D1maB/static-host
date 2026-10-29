@@ -31,7 +31,7 @@ class SitesTable
                 TextColumn::make('domain_status')
                     ->label('Domain status')
                     ->badge()
-                    ->color(fn ($state) => (is_string($state) ? $state : $state?->value) === 'ready' ? 'success' : 'warning')
+                    ->color(fn ($state) => (is_string($state) ? $state : $state?->value) === \App\Enums\DomainStatus::Ready->value ? 'success' : 'warning')
                     ->formatStateUsing(fn ($state) => ucfirst(is_string($state) ? $state : $state?->value)),
                 TextColumn::make('files_count')
                     ->label('Files')

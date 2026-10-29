@@ -28,6 +28,11 @@ class SitesTable
                     ->getStateUsing(fn ($record) => strtolower($record->slug) . '.' . config('app.site_base_domain', 'localhost'))
                     ->url(fn ($record) => 'http://' . strtolower($record->slug) . '.' . config('app.site_base_domain', 'localhost'))
                     ->openUrlInNewTab(),
+                TextColumn::make('domain_status')
+                    ->label('Domain status')
+                    ->badge()
+                    ->color(fn ($state) => (is_string($state) ? $state : $state?->value) === 'ready' ? 'success' : 'warning')
+                    ->formatStateUsing(fn ($state) => ucfirst(is_string($state) ? $state : $state?->value)),
                 TextColumn::make('files_count')
                     ->label('Files')
                     ->getStateUsing(function (Site $record) {

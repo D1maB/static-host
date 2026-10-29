@@ -12,6 +12,9 @@
           <a :href="'http://' + site.slug.toLowerCase() + '.localhost/'" target="_blank" class="text-sm text-indigo-600">{{ site.slug.toLowerCase() }}.localhost</a>
           <div v-if="site.custom_domain" class="text-xs text-gray-500">
             Custom: {{ site.custom_domain }}
+            <span :class="['ml-2 text-xs font-medium', site.domain_status === 'ready' ? 'text-green-600' : 'text-amber-600']">
+              ({{ site.domain_status || 'pending' }})
+            </span>
             <button @click="checkDomain(site)" class="ml-2 text-indigo-600 hover:underline">Check DNS</button>
             <span v-if="domainStatus[site.id]" class="ml-2" :class="domainStatus[site.id].ready ? 'text-green-600' : 'text-red-600'">
               {{ domainStatus[site.id].message }}

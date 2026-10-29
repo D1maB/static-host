@@ -212,6 +212,7 @@ class SiteController extends Controller
 
         $site->update([
             'custom_domain' => $validated['custom_domain'] ? strtolower(trim($validated['custom_domain'])) : null,
+            'domain_status' => \App\Enums\DomainStatus::Pending,
         ]);
 
         return response()->json(['site' => $site]);

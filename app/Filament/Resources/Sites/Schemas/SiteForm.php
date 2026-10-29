@@ -19,6 +19,10 @@ class SiteForm
                     ->required(),
                 TextInput::make('name')
                     ->required(),
+                TextInput::make('custom_domain')
+                    ->label('Custom domain')
+                    ->placeholder('example.com')
+                    ->unique(ignoreRecord: true),
                 Toggle::make('is_active')
                     ->required(),
                 DateTimePicker::make('published_at'),

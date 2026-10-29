@@ -9,18 +9,66 @@ use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
 class StaticSiteController extends Controller
 {
-    public function subdomain(Request $request, ?string $site = null, ?string $path = null): \Illuminate\Http\Response|\Symfony\Component\HttpFoundation\BinaryFileResponse
+    public function host(Request $request, ?string $path = null): Response|BinaryFileResponse
     {
-        $slug = $site ?: str_replace('.' . config('app.site_base_domain', 'localhost'), '', $request->getHost());
+        $site = $this->resolveSiteByHost($request);
 
-        return $this->show($request, $slug, $path);
+        return $this->serve($site, $path);
+    }
+
+    public function subdomain(Request $request, ?string $siteParam = null, ?string $path = null): Response|BinaryFileResponse
+    {
+        $base = config('app.site_base_domain', 'localhost');
+        $host = $request->getHost();
+
+        if ($siteParam !== null && $siteParam !== '') {
+            $site = Site::whereRaw('LOWER(slug) = ?', [strtolower($siteParam)])
+                ->where('is_active', true)
+                ->firstOrFail();
+        } elseif (str_ends_with($host, '.' . $base)) {
+            $slug = substr($host, 0, - (strlen($base) + 1));
+            $site = Site::whereRaw('LOWER(slug) = ?', [strtolower($slug)])
+                ->where('is_active', true)
+                ->firstOrFail();
+        } else {
+            $site = Site::whereRaw('LOWER(custom_domain) = ?', [strtolower($host)])
+                ->where('is_active', true)
+                ->firstOrFail();
+        }
+
+        return $this->serve($site, $path);
     }
 
     public function show(Request $request, string $slug, ?string $path = null): Response|BinaryFileResponse
     {
-        $site = Site::whereRaw('LOWER(slug) = ?', [strtolower($slug)])->where('is_active', true)->firstOrFail();
+        $site = Site::whereRaw('LOWER(slug) = ?', [strtolower($slug)])
+            ->where('is_active', true)
+            ->firstOrFail();
 
-        $base = storage_path('app/private/'.$site->storage_path);
+        return $this->serve($site, $path);
+    }
+
+    public function resolveSiteByHost(Request $request): Site
+    {
+        $host = $request->getHost();
+        $base = config('app.site_base_domain', 'localhost');
+
+        if (str_ends_with($host, '.' . $base)) {
+            $slug = substr($host, 0, - (strlen($base) + 1));
+
+            return Site::whereRaw('LOWER(slug) = ?', [strtolower($slug)])
+                ->where('is_active', true)
+                ->firstOrFail();
+        }
+
+        return Site::whereRaw('LOWER(custom_domain) = ?', [strtolower($host)])
+            ->where('is_active', true)
+            ->firstOrFail();
+    }
+
+    public function serve(Site $site, ?string $path = null): Response|BinaryFileResponse
+    {
+        $base = storage_path('app/private/' . $site->storage_path);
         $relative = $path ?? $site->entry_path;
         $relative = ltrim(str_replace(['..', '\\'], ['', '/'], $relative), '/');
 
@@ -30,11 +78,12 @@ class StaticSiteController extends Controller
         if ($extension !== '' && ! in_array($extension, $allowedExtensions, true)) {
             abort(404);
         }
-        $file = realpath($base.'/'.$relative);
+
+        $file = realpath($base . '/' . $relative);
 
         if ($file === false || ! str_starts_with($file, realpath($base)) || ! is_file($file)) {
-            // try directory index
-            $index = realpath($base.'/'.$relative.'/index.html');
+            $index = realpath($base . '/' . $relative . '/index.html');
+
             if ($index && str_starts_with($index, realpath($base)) && is_file($index)) {
                 $file = $index;
             } else {

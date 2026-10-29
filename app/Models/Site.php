@@ -10,7 +10,7 @@ class Site extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['user_id', 'name', 'slug', 'entry_path', 'storage_path', 'size_bytes', 'is_active', 'published_at'];
+    protected $fillable = ['user_id', 'name', 'slug', 'custom_domain', 'entry_path', 'storage_path', 'size_bytes', 'is_active', 'published_at'];
 
     protected $casts = [
         'is_active' => 'boolean',

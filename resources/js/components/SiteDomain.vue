@@ -42,8 +42,8 @@ async function submit() {
     const res = await axios.patch('/sites/' + props.site.id + '/domain', {
       custom_domain: domain.value || null,
     });
-    success.value = 'Saved.';
     emit('updated', res.data.site);
+    close();
   } catch (e) {
     error.value = e.response?.data?.message || e.response?.data?.errors?.custom_domain?.[0] || 'Failed to save.';
   } finally {

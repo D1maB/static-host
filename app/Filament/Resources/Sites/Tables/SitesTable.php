@@ -28,6 +28,27 @@ class SitesTable
                     ->getStateUsing(fn ($record) => strtolower($record->slug) . '.' . config('app.site_base_domain', 'localhost'))
                     ->url(fn ($record) => 'http://' . strtolower($record->slug) . '.' . config('app.site_base_domain', 'localhost'))
                     ->openUrlInNewTab(),
+                TextColumn::make('files_count')
+                    ->label('Files')
+                    ->getStateUsing(function (Site $record) {
+                        $base = storage_path('app/private/' . $record->storage_path);
+                        if (! is_dir($base)) {
+                            return 0;
+                        }
+
+                        $count = 0;
+                        $iterator = new \RecursiveIteratorIterator(
+                            new \RecursiveDirectoryIterator($base, \RecursiveDirectoryIterator::SKIP_DOTS),
+                        );
+
+                        foreach ($iterator as $file) {
+                            if ($file->isFile()) {
+                                $count++;
+                            }
+                        }
+
+                        return $count;
+                    }),
                 IconColumn::make('is_active')
                     ->boolean(),
                 TextColumn::make('published_at')

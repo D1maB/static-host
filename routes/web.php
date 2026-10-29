@@ -26,6 +26,7 @@ Route::middleware('auth')->group(function () {
     })->name('dashboard');
 
     Route::get('/sites/mine', [SiteController::class, 'index'])->name('sites.index');
+    Route::get('/sites/{site}/files', [SiteController::class, 'files'])->name('sites.files');
     Route::post('/sites', [SiteController::class, 'store'])->name('sites.store');
     Route::delete('/sites/{site}', [SiteController::class, 'destroy'])->name('sites.destroy');
 });

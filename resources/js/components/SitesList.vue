@@ -11,19 +11,25 @@
           <div class="font-medium">{{ site.name }}</div>
           <a :href="'/sites/' + site.slug" target="_blank" class="text-sm text-indigo-600">/sites/{{ site.slug }}</a>
         </div>
-        <button @click="remove(site)" class="text-red-600 text-sm">Delete</button>
+        <div class="flex gap-3 items-center">
+          <button @click="viewFiles(site)" class="text-indigo-600 text-sm">Files</button>
+          <button @click="remove(site)" class="text-red-600 text-sm">Delete</button>
+        </div>
       </div>
       <div v-if="!sites.length" class="text-gray-500">No sites yet.</div>
     </div>
+    <SiteFiles v-if="selectedSite" :site="selectedSite" @close="selectedSite = null" />
   </div>
 </template>
 
 <script setup>
 import { ref, onMounted } from 'vue';
 import axios from 'axios';
+import SiteFiles from './SiteFiles.vue';
 
 const sites = ref([]);
 const loading = ref(true);
+const selectedSite = ref(null);
 
 async function load() {
   loading.value = true;
@@ -36,6 +42,10 @@ async function remove(site) {
   if (!confirm('Delete site?')) return;
   await axios.delete('/sites/' + site.id);
   await load();
+}
+
+function viewFiles(site) {
+  selectedSite.value = site;
 }
 
 onMounted(load);

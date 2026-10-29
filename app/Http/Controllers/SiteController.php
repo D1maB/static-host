@@ -75,6 +75,36 @@ class SiteController extends Controller
         return response()->json(['site' => $site], 201);
     }
 
+    public function files(Request $request, Site $site)
+    {
+        if ($site->user_id !== $request->user()->id && ! $request->user()->isAdmin()) {
+            abort(403);
+        }
+
+        $base = storage_path('app/private/' . $site->storage_path);
+        $files = [];
+
+        if (is_dir($base)) {
+            $iterator = new \RecursiveIteratorIterator(
+                new \RecursiveDirectoryIterator($base, \RecursiveDirectoryIterator::SKIP_DOTS),
+            );
+            foreach ($iterator as $file) {
+                if ($file->isFile()) {
+                    $relative = ltrim(str_replace($base, '', $file->getPathname()), '/');
+                    $files[] = [
+                        'path' => $relative,
+                        'size' => $file->getSize(),
+                    ];
+                }
+            }
+        }
+
+        return response()->json([
+            'site' => $site->only(['id', 'slug', 'name']),
+            'files' => $files,
+        ]);
+    }
+
     public function destroy(Request $request, Site $site)
     {
         if ($site->user_id !== $request->user()->id && ! $request->user()->isAdmin()) {

@@ -48,6 +48,13 @@ class ScanSiteContent extends Command
                 )->prompt($text, provider: $lab, model: $model ?: null, timeout: 120);
 
                 $result = trim((string) $response->text);
+                $isSafe = strtoupper($result) === 'SAFE';
+
+                $site->update([
+                    'scanned_at' => now(),
+                    'is_safe' => $isSafe,
+                ]);
+
                 $this->info($site->slug.': '.$result);
             } catch (\Throwable $e) {
                 $this->error($site->slug.': scan failed - '.$e->getMessage());

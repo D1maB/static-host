@@ -23,6 +23,11 @@ class StaticSiteController extends Controller
         $base = storage_path('app/private/'.$site->storage_path);
         $relative = $path ?? $site->entry_path;
         $relative = ltrim(str_replace(['..', '\\'], ['', '/'], $relative), '/');
+
+        $blockedExtensions = ['php', 'phtml', 'php3', 'php4', 'php5', 'phar', 'pht', 'jsp', 'asp', 'aspx', 'sh', 'exe', 'bat', 'cmd', 'cgi', 'pl', 'py', 'rb'];
+        if (in_array(strtolower(pathinfo($relative, PATHINFO_EXTENSION)), $blockedExtensions, true)) {
+            abort(404);
+        }
         $file = realpath($base.'/'.$relative);
 
         if ($file === false || ! str_starts_with($file, realpath($base)) || ! is_file($file)) {

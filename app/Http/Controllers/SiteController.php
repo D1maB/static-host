@@ -37,18 +37,66 @@ class SiteController extends Controller
             return response()->json(['message' => 'Invalid zip archive'], 422);
         }
 
-        // Prevent path traversal
+        // Prevent path traversal and unsafe executable files
+        $blockedExtensions = ['php', 'phtml', 'php3', 'php4', 'php5', 'phar', 'pht', 'jsp', 'asp', 'aspx', 'sh', 'exe', 'bat', 'cmd', 'com', 'cgi', 'pl', 'py', 'rb'];
+
         for ($i = 0; $i < $zip->numFiles; $i++) {
             $name = $zip->getNameIndex($i);
+
             if (str_contains($name, '..') || str_starts_with($name, '/')) {
                 $zip->close();
 
                 return response()->json(['message' => 'Unsafe paths in archive'], 422);
             }
+
+            $basename = strtolower(basename($name));
+
+            if ($basename === '.htaccess' || $basename === '.user.ini') {
+                $zip->close();
+
+                return response()->json(['message' => 'Server configuration or executable files are not allowed'], 422);
+            }
+
+            $extension = strtolower(pathinfo($basename, PATHINFO_EXTENSION));
+            if (in_array($extension, $blockedExtensions, true)) {
+                $zip->close();
+
+                return response()->json(['message' => 'Executable files are not allowed'], 422);
+            }
         }
 
         $zip->extractTo($absolute);
         $zip->close();
+
+        // Block executable code even if it was disguised with a safe extension.
+        if (is_dir($absolute)) {
+            $iterator = new \RecursiveIteratorIterator(
+                new \RecursiveDirectoryIterator($absolute, \RecursiveDirectoryIterator::SKIP_DOTS),
+            );
+
+            foreach ($iterator as $file) {
+                if (! $file->isFile()) {
+                    continue;
+                }
+
+                $contents = @file_get_contents($file->getPathname(), false, null, 0, 4096);
+                if ($contents === false) {
+                    continue;
+                }
+
+                $trimmed = ltrim($contents);
+                if (
+                    str_contains($contents, '<?php')
+                    || str_contains($contents, '<?=')
+                    || str_contains($contents, '<%')
+                    || str_starts_with($trimmed, '#!')
+                ) {
+                    self::deleteDirectory($absolute);
+
+                    return response()->json(['message' => 'Executable code is not allowed'], 422);
+                }
+            }
+        }
 
         // Flatten a single top-level directory so the site serves from the root.
         $rootEntries = array_values(array_diff(scandir($absolute), ['.', '..']));

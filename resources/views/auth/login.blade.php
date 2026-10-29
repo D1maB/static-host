@@ -14,7 +14,7 @@
                 @csrf
                 <label class="block mb-2">Email</label>
                 <input type="email" name="email" required class="w-full border rounded px-3 py-2 mb-4">
-                <button class="w-full bg-indigo-600 text-white py-2 rounded">Send code</button>
+                <button class="w-full bg-emerald-600 text-white py-2 rounded">Send code</button>
             </form>
         </div>
         <div id="step2" class="hidden">
@@ -23,7 +23,7 @@
                 <input type="hidden" name="email" id="emailHidden">
                 <label class="block mb-2">Code</label>
                 <input type="text" name="code" required class="w-full border rounded px-3 py-2 mb-4">
-                <button class="w-full bg-indigo-600 text-white py-2 rounded">Verify</button>
+                <button class="w-full bg-emerald-600 text-white py-2 rounded">Verify</button>
             </form>
         </div>
         <p id="msg" class="mt-4 text-sm text-gray-600"></p>

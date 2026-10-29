@@ -10,13 +10,13 @@
         <label class="block mb-1">Zip archive (max 50 MB)</label>
         <input type="file" ref="fileInput" accept=".zip" required class="w-full">
       </div>
-      <button :disabled="uploading" class="bg-indigo-600 text-white px-4 py-2 rounded">
+      <button :disabled="uploading" class="bg-emerald-600 text-white px-4 py-2 rounded">
         {{ uploading ? 'Uploading...' : 'Upload' }}
       </button>
       <p v-if="message" :class="['text-sm', isError ? 'text-red-600' : 'text-green-600']">{{ message }}</p>
       <p class="text-sm text-gray-600 mt-2">Allowed: html, htm, css, js, json, xml, txt, md, svg, png, jpg, jpeg, gif, webp, ico, pdf, woff, woff2, ttf, otf, eot, webmanifest, map.</p>
     </form>
-    <p class="mt-4"><router-link to="/" class="text-indigo-600">Back to sites</router-link></p>
+    <p class="mt-4"><router-link to="/" class="text-emerald-600">Back to sites</router-link></p>
   </div>
 </template>
 

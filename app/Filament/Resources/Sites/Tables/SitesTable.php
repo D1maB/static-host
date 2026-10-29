@@ -23,8 +23,11 @@ class SitesTable
                     ->searchable(),
                 TextColumn::make('entry_path')
                     ->searchable(),
-                TextColumn::make('storage_path')
-                    ->searchable(),
+                TextColumn::make('domain')
+                    ->label('Domain')
+                    ->getStateUsing(fn ($record) => strtolower($record->slug) . '.' . config('app.site_base_domain', 'localhost'))
+                    ->url(fn ($record) => 'http://' . strtolower($record->slug) . '.' . config('app.site_base_domain', 'localhost'))
+                    ->openUrlInNewTab(),
                 IconColumn::make('is_active')
                     ->boolean(),
                 TextColumn::make('published_at')

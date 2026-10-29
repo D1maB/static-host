@@ -7,7 +7,7 @@
         <input v-model="name" required class="w-full border rounded px-3 py-2">
       </div>
       <div>
-        <label class="block mb-1">Zip archive</label>
+        <label class="block mb-1">Zip archive (max 50 MB)</label>
         <input type="file" ref="fileInput" accept=".zip" required class="w-full">
       </div>
       <button :disabled="uploading" class="bg-indigo-600 text-white px-4 py-2 rounded">

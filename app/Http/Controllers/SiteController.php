@@ -63,7 +63,9 @@ class SiteController extends Controller
                 if (! in_array($extension, $allowedExtensions, true)) {
                     $zip->close();
 
-                    return response()->json(['message' => 'Only safe static files are allowed'], 422);
+                    return response()->json([
+                        'message' => 'Only safe static files are allowed. Allowed extensions: ' . implode(', ', $allowedExtensions),
+                    ], 422);
                 }
             }
         }

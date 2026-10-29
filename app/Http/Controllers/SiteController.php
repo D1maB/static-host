@@ -205,13 +205,13 @@ class SiteController extends Controller
                 'nullable',
                 'string',
                 'max:255',
-                'regex:/^(?!-)[A-Za-z0-9-]+(\.[A-Za-z0-9-]+)*$/',
+                'regex:/^(?=.{1,253}$)(?!-)([A-Za-z0-9-]{1,63}\.)+[A-Za-z]{2,63}$/',
                 \Illuminate\Validation\Rule::unique('sites', 'custom_domain')->ignore($site->id),
             ],
         ]);
 
         $site->update([
-            'custom_domain' => $validated['custom_domain'] ?: null,
+            'custom_domain' => $validated['custom_domain'] ? strtolower(trim($validated['custom_domain'])) : null,
         ]);
 
         return response()->json(['site' => $site]);

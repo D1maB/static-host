@@ -35,12 +35,19 @@ onMounted(() => {
 });
 
 async function submit() {
+  const value = domain.value.trim().toLowerCase();
+  const domainRegex = /^(?=.{1,253}$)(?!-)([a-z0-9-]{1,63}\.)+[a-z]{2,63}$/;
+  if (value && !domainRegex.test(value)) {
+    error.value = 'Enter a valid domain, e.g. example.com';
+    return;
+  }
+
   saving.value = true;
   error.value = '';
   success.value = '';
   try {
     const res = await axios.patch('/sites/' + props.site.id + '/domain', {
-      custom_domain: domain.value || null,
+      custom_domain: value || null,
     });
     emit('updated', res.data.site);
     close();

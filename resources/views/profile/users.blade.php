@@ -8,7 +8,7 @@
 </head>
 <body class="bg-gray-100 min-h-screen">
   <div class="max-w-5xl mx-auto p-6">
-    <a href="{{ route('admin.dashboard') }}" class="text-slate-600 mb-4 inline-block">&larr; Back</a>
+    <a href="{{ route('admin.dashboard') }}" class="text-amber-600 mb-4 inline-block">&larr; Back</a>
     <h1 class="text-2xl font-bold mb-4">Users</h1>
     @if(session('success'))<div class="bg-green-100 p-2 mb-3">{{ session('success') }}</div>@endif
     @if(session('error'))<div class="bg-red-100 p-2 mb-3">{{ session('error') }}</div>@endif

@@ -8,7 +8,7 @@
 </head>
 <body class="bg-gray-100 min-h-screen">
   <div class="max-w-5xl mx-auto p-6">
-    <a href="{{ route('admin.dashboard') }}" class="text-slate-600 mb-4 inline-block">&larr; Back</a>
+    <a href="{{ route('admin.dashboard') }}" class="text-amber-600 mb-4 inline-block">&larr; Back</a>
     <h1 class="text-2xl font-bold mb-4">Sites</h1>
     @if(session('success'))<div class="bg-green-100 p-2 mb-3">{{ session('success') }}</div>@endif
     <div class="bg-white shadow rounded">
@@ -19,10 +19,10 @@
           <tr class="border-b">
             <td class="p-3">{{ $site->name }}</td>
             <td class="p-3">{{ $site->user->email ?? '' }}</td>
-            <td class="p-3"><a href="http://{{ strtolower($site->slug) }}.localhost" target="_blank" class="text-slate-600">{{ strtolower($site->slug) }}.localhost</a></td>
+            <td class="p-3"><a href="http://{{ strtolower($site->slug) }}.localhost" target="_blank" class="text-amber-600">{{ strtolower($site->slug) }}.localhost</a></td>
             <td class="p-3">{{ $site->is_active ? 'Yes' : 'No' }}</td>
             <td class="p-3 text-right space-x-3">
-              <form method="POST" action="{{ route('admin.sites.toggle', $site) }}" class="inline">@csrf @method('PATCH')<button class="text-slate-600">Toggle</button></form>
+              <form method="POST" action="{{ route('admin.sites.toggle', $site) }}" class="inline">@csrf @method('PATCH')<button class="text-amber-600">Toggle</button></form>
               <form method="POST" action="{{ route('admin.sites.destroy', $site) }}" class="inline" onsubmit="return confirm('Delete?')">@csrf @method('DELETE')<button class="text-red-600">Delete</button></form>
             </td>
           </tr>

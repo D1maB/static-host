@@ -1,7 +1,7 @@
 <template>
   <div class="fixed inset-0 bg-black/50 flex items-center justify-center z-50" @click.self="close">
     <div class="bg-white rounded-lg shadow-lg w-full max-w-md p-6">
-      <div class="bg-blue-600 text-black rounded p-3 mb-4 text-sm">
+      <div class="bg-blue-600 text-white rounded p-3 mb-4 text-sm">
         Create an A record (or CNAME) in your DNS provider pointing this domain to your server's IP. DNS propagation can take some time.
       </div>
       <h3 class="text-lg font-semibold mb-4">Custom domain — {{ site.name }}</h3>

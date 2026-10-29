@@ -1,7 +1,7 @@
 <?php
 
-use App\Http\Controllers\Admin\SiteController as AdminSiteController;
-use App\Http\Controllers\Admin\UserController as AdminUserController;
+use App\Http\Controllers\Profile\SiteController as AdminSiteController;
+use App\Http\Controllers\Profile\UserController as AdminUserController;
 use App\Http\Controllers\Auth\OtpController;
 use App\Http\Controllers\SiteController;
 use App\Http\Controllers\StaticSiteController;
@@ -32,7 +32,7 @@ Route::middleware('auth')->group(function () {
 
 Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function () {
     Route::get('/', function () {
-        return view('admin.dashboard');
+        return view('profile.dashboard');
     })->name('dashboard');
     Route::get('/users', [AdminUserController::class, 'index'])->name('users');
     Route::delete('/users/{user}', [AdminUserController::class, 'destroy'])->name('users.destroy');

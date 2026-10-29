@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Admin;
+namespace App\Http\Controllers\Profile;
 
 use App\Http\Controllers\Controller;
 use App\Models\Site;
@@ -9,7 +9,7 @@ class SiteController extends Controller
 {
     public function index()
     {
-        return view('admin.sites', ['sites' => Site::with('user')->latest()->paginate(20)]);
+        return view('profile.sites', ['sites' => Site::with('user')->latest()->paginate(20)]);
     }
 
     public function destroy(Site $site)

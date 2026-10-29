@@ -48,11 +48,14 @@ class ScanSiteContent extends Command
 
             try {
                 $response = agent(
-                    instructions: 'You are a content safety scanner. Analyze the provided website text and decide whether it is safe for public hosting. Reply with exactly one word: SAFE or UNSAFE.',
+                    instructions: 'You are a content safety scanner. Analyze the provided website text and decide whether it is safe for public hosting. Reply with only one word and nothing else: SAFE or UNSAFE.',
                 )->prompt($text, provider: $lab, model: $model ?: null, timeout: 120);
 
                 $result = trim((string) $response->text);
-                $isSafe = strtoupper($result) === 'SAFE';
+                $normalized = strtoupper($result);
+                $isSafe = str_contains($normalized, 'UNSAFE')
+                    ? false
+                    : str_contains($normalized, 'SAFE');
 
                 $site->update([
                     'scanned_at' => now(),

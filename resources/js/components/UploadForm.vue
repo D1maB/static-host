@@ -14,6 +14,7 @@
         {{ uploading ? 'Uploading...' : 'Upload' }}
       </button>
       <p v-if="message" :class="['text-sm', isError ? 'text-red-600' : 'text-green-600']">{{ message }}</p>
+      <p class="text-xs text-gray-500 mt-2">Allowed: html, htm, css, js, json, xml, txt, md, svg, png, jpg, jpeg, gif, webp, ico, pdf, woff, woff2, ttf, otf, eot, webmanifest, map.</p>
     </form>
     <p class="mt-4"><router-link to="/" class="text-indigo-600">Back to sites</router-link></p>
   </div>

@@ -42,6 +42,13 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::patch('/sites/{site}/toggle', [AdminSiteController::class, 'toggle'])->name('sites.toggle');
 });
 
+Route::domain('{site:slug}.' . config('app.site_base_domain', 'localhost'))
+    ->group(function () {
+        Route::get('/{path?}', [StaticSiteController::class, 'subdomain'])
+            ->where('path', '.*')
+            ->name('sites.subdomain');
+    });
+
 Route::get('/sites/{slug}/{path?}', [StaticSiteController::class, 'show'])
     ->where('path', '.*')
     ->name('sites.show');

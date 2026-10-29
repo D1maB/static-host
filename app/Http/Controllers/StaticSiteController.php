@@ -9,9 +9,16 @@ use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
 class StaticSiteController extends Controller
 {
+    public function subdomain(Request $request, ?string $site = null, ?string $path = null): \Illuminate\Http\Response|\Symfony\Component\HttpFoundation\BinaryFileResponse
+    {
+        $slug = $site ?: str_replace('.' . config('app.site_base_domain', 'localhost'), '', $request->getHost());
+
+        return $this->show($request, $slug, $path);
+    }
+
     public function show(Request $request, string $slug, ?string $path = null): Response|BinaryFileResponse
     {
-        $site = Site::where('slug', $slug)->where('is_active', true)->firstOrFail();
+        $site = Site::whereRaw('LOWER(slug) = ?', [strtolower($slug)])->where('is_active', true)->firstOrFail();
 
         $base = storage_path('app/private/'.$site->storage_path);
         $relative = $path ?? $site->entry_path;
